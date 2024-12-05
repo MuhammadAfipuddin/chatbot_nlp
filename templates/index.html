@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
+    <style>
+        body {
+            font-family: monospace;
+        }
+
+        #chatbox {
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .botText {
+            font-family: monospace;
+            font-size: 16px;
+            text-align: left;
+            line-height: 25px;
+            color: green;
+        }
+
+        #userInput {
+            margin-top: 50px;
+            width: 80%;
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #textInput {
+            border: 3px solid white;
+            border-bottom: 3px solid #657889;
+            font-family: monospace;
+            font-size: 16px;
+            width: 60%;
+            padding: 10px;
+            color: green;
+        }
+
+        #buttonInput {
+            font-family: monospace;
+            font-size: 16px;
+            padding: 10px;
+            border: 3px solid greenyellow;
+            background-color: green;
+            border-radius: 10px;
+            color: white;
+        }
+
+        h1 {
+            text-align: center;
+            color: green;
+        }
+
+        .userText {
+            text-align: right;
+        }
+    </style>
+
+</head>
+<body>
+    <h1>Weather Chatbot App</h1>
+    <div>
+        <div id="chatbox">
+            <p class="botText">
+                <span>Hi there!</span> <br>
+                <span>Which city do you want to know it's weather forcast?</span>
+            </p>
+        </div>
+        <div id="userInput">
+            <input type="text" name="userMessage" id="textInput" placeholder="Type your message...">
+            <input type="submit" id="buttonInput" value="Send">
+        </div>
+    </div>
+
+    <script>
+        function getUserResponse () {
+            let userText = $("#textInput").val();
+            let userHtml = '<p class="userText">User: <span>' + userText + '</span></p>';
+            $("#textInput").val("");
+            $('#chatbox').append(userHtml);
+            document.getElementById("userInput").scrollIntoView({block: "start", behavior: "smooth"});
+            $.get("/get", {userMessage: userText}).done(function(data) {
+                let botHtml = '<p class="botText">Chatbot: <span>' + "Temperature: " +data.main.temp + ' - Conditions: ' + data.weather[0].description + " - Humidity: " + data.main.humidity + '</span></p>';
+                $('#chatbox').append(botHtml);
+            })
+        }
+
+        $("#textInput").keypress(function(e) {
+            if (e.which == 13) {
+                getUserResponse();
+            }
+        });
+
+        $("#buttonInput").click(function() {
+            getUserResponse();
+        });
+    </script>
+</body>
+</html>
